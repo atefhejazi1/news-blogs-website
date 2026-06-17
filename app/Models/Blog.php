@@ -4,10 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class Category extends Model
+class Blog extends Model
 {
+    /** @use HasFactory<\Database\Factories\BlogFactory> */
     use HasFactory;
 
     /**
@@ -18,14 +19,16 @@ class Category extends Model
     protected $fillable = [
         'title',
         'slug',
-        'description',
+        'content',
+        'image',
+        'category_id',
     ];
 
     /**
-     * Get the blog posts for this category.
+     * Get the category that owns the blog post.
      */
-    public function blogs(): HasMany
+    public function category(): BelongsTo
     {
-        return $this->hasMany(Blog::class);
+        return $this->belongsTo(Category::class);
     }
 }

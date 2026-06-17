@@ -52,7 +52,7 @@
                                 <tr>
                                     <td>{{ $category->title }}</td>
                                     <td>{{ $category->slug }}</td>
-                                    <td>{{ $category->created_at->format('M d, Y') }}</td>
+                                    <td>{{ $category->created_at}}</td>
                                     <td class="text-center">
                                         <a href="{{ route('categories.show', $category->id) }}" class="btn btn-sm btn-info">
                                             View
