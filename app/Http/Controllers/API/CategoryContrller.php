@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use App\Models\Category;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class CategoryContrller extends Controller
 {
@@ -26,7 +27,20 @@ class CategoryContrller extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'title' => 'required|string|unique:categories,title',
+            'description' => 'nullable|string',
+        ]);
+
+        $validated['slug'] = Str::slug($validated['title']);
+
+        Category::create($validated);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Category addedd successfully.',
+            'data' => $validated
+        ], 201);
     }
 
     /**
@@ -34,7 +48,20 @@ class CategoryContrller extends Controller
      */
     public function show(string $id)
     {
-        //
+        $category = Category::find($id);
+
+        if (! $category) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Category not found.',
+            ], 404);
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Category retrieved successfully.',
+            'data' => $category
+        ], 200);
     }
 
     /**
@@ -42,7 +69,29 @@ class CategoryContrller extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $category = Category::find($id);
+
+        if (! $category) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Category not found.',
+            ], 404);
+        }
+
+        $validated = $request->validate([
+            'title' => 'required|string|unique:categories,title,' . $category->id,
+            'description' => 'nullable|string',
+        ]);
+
+        $validated['slug'] = Str::slug($validated['title']);
+
+        $category->update($validated);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Category updated successfully.',
+            'data' => $category
+        ], 200);
     }
 
     /**
@@ -50,6 +99,20 @@ class CategoryContrller extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $category = Category::find($id);
+
+        if (! $category) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Category not found.',
+            ], 404);
+        }
+
+        $category->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Category deleted successfully.',
+        ], 200);
     }
 }
